@@ -48,7 +48,10 @@ export async function deleteCategory(id: string): Promise<void> {
   if (error) throw error;
 }
 
-export async function updateCategory(id: string, input: { name?: string; slug?: string; image_url?: string | null; description?: string | null }) {
+export async function updateCategory(
+  id: string,
+  input: { name?: string; slug?: string; image_url?: string | null; description?: string | null },
+) {
   const payload: any = {};
   if (typeof input.name === "string") payload.name = input.name.trim();
   if (typeof input.slug === "string") payload.slug = input.slug.trim();

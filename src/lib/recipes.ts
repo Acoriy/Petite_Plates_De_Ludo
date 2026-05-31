@@ -61,7 +61,9 @@ function selectRecipeFields(includeChefNotes = true) {
   return includeChefNotes ? SELECT_RECIPE_WITH_CHEF : SELECT_RECIPE_BASE;
 }
 
-async function selectRecipe(query: ReturnType<typeof supabase.from> & { select: (cols: string) => any }) {
+async function selectRecipe(
+  query: ReturnType<typeof supabase.from> & { select: (cols: string) => any },
+) {
   const { data, error } = await query.select(selectRecipeFields(true));
   if (!error) return { data, error };
   if (error.message?.includes("chef_notes")) {

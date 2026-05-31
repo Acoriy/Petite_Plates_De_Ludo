@@ -25,18 +25,28 @@ export function Footer() {
               </div>
             </div>
             <p className="mt-4 max-w-md text-sm leading-relaxed text-cream/85">
-              Des recettes qui sentent bon le beurre noisette, racontées avec un brin
-              d'humour et beaucoup d'amour. Bienvenue dans la cuisine de Ludo.
+              Des recettes qui sentent bon le beurre noisette, racontées avec un brin d'humour et
+              beaucoup d'amour. Bienvenue dans la cuisine de Ludo.
             </p>
           </div>
 
           <div>
-            <p className="font-display text-sm font-bold uppercase tracking-wider text-honey">Catégories</p>
+            <p className="font-display text-sm font-bold uppercase tracking-wider text-honey">
+              Catégories
+            </p>
             <ul className="mt-4 space-y-2 text-sm text-cream/90">
               {categories.length === 0 ? (
                 <>
-                  <li><Link to="/carnet-de-recettes" className="transition-colors hover:text-honey">Toutes les recettes</Link></li>
-                  <li><Link to="/carnet-de-recettes" className="transition-colors hover:text-honey">Catégories</Link></li>
+                  <li>
+                    <Link to="/carnet-de-recettes" className="transition-colors hover:text-honey">
+                      Toutes les recettes
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/carnet-de-recettes" className="transition-colors hover:text-honey">
+                      Catégories
+                    </Link>
+                  </li>
                 </>
               ) : (
                 categories.slice(0, 6).map((c) => (
@@ -58,18 +68,33 @@ export function Footer() {
           </div>
 
           <div>
-            <p className="font-display text-sm font-bold uppercase tracking-wider text-honey">Le site</p>
+            <p className="font-display text-sm font-bold uppercase tracking-wider text-honey">
+              Le site
+            </p>
             <ul className="mt-4 space-y-2 text-sm text-cream/90">
-              <li><Link to="/carnet-de-recettes" className="transition-colors hover:text-honey">Toutes les recettes</Link></li>
-              <li><Link to="/qui-suis-je" className="transition-colors hover:text-honey">À propos de Ludo</Link></li>
-              <li><Link to="/contact" className="transition-colors hover:text-honey">Contact</Link></li>
+              <li>
+                <Link to="/carnet-de-recettes" className="transition-colors hover:text-honey">
+                  Toutes les recettes
+                </Link>
+              </li>
+              <li>
+                <Link to="/qui-suis-je" className="transition-colors hover:text-honey">
+                  À propos de Ludo
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" className="transition-colors hover:text-honey">
+                  Contact
+                </Link>
+              </li>
             </ul>
 
             <p className="mt-6 text-xs font-bold uppercase tracking-wider text-honey">Me suivre</p>
             <div className="mt-3 flex gap-3">
               <a
                 href={CHEF_CONTACT.facebook}
-                target="_blank" rel="noopener noreferrer"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="grid h-10 w-10 place-items-center rounded-full bg-cream/15 text-cream transition-all hover:bg-honey hover:text-espresso hover:scale-110"
                 aria-label="Facebook"
               >
@@ -84,7 +109,8 @@ export function Footer() {
               </a>
               <a
                 href={CHEF_CONTACT.instagram}
-                target="_blank" rel="noopener noreferrer"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="grid h-10 w-10 place-items-center rounded-full bg-cream/15 text-cream transition-all hover:bg-honey hover:text-espresso hover:scale-110"
                 aria-label="Instagram"
               >
@@ -98,8 +124,12 @@ export function Footer() {
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-cream/20 pt-8 text-xs text-cream/80 md:flex-row">
           <p>© {new Date().getFullYear()} Les Petits Plats de Ludo — Mijoté avec 🧡.</p>
           <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
-            <Link to="/mentions-legales" className="transition-colors hover:text-honey">Mentions légales</Link>
-            <Link to="/confidentialite" className="transition-colors hover:text-honey">Confidentialité</Link>
+            <Link to="/mentions-legales" className="transition-colors hover:text-honey">
+              Mentions légales
+            </Link>
+            <Link to="/confidentialite" className="transition-colors hover:text-honey">
+              Confidentialité
+            </Link>
           </div>
         </div>
       </div>

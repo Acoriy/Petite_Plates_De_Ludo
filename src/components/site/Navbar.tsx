@@ -7,7 +7,11 @@ import { listCategories } from "@/lib/recipes";
 import { CategoryImage } from "@/components/site/CategoryImage";
 import { cn } from "@/lib/utils";
 
-const NAV_LINKS: { to: "/" | "/carnet-de-recettes" | "/qui-suis-je" | "/contact"; label: string; hasDropdown?: boolean }[] = [
+const NAV_LINKS: {
+  to: "/" | "/carnet-de-recettes" | "/qui-suis-je" | "/contact";
+  label: string;
+  hasDropdown?: boolean;
+}[] = [
   { to: "/", label: "Accueil" },
   { to: "/carnet-de-recettes", label: "Carnet de recettes", hasDropdown: true },
   { to: "/qui-suis-je", label: "Qui suis-je ?" },
@@ -41,7 +45,9 @@ export function Navbar() {
     <header
       className={cn(
         "sticky top-0 z-50 transition-all duration-300 no-print",
-        scrolled ? "bg-background/85 backdrop-blur-md shadow-[var(--shadow-soft)]" : "bg-transparent",
+        scrolled
+          ? "bg-background/85 backdrop-blur-md shadow-[var(--shadow-soft)]"
+          : "bg-transparent",
       )}
     >
       <nav className="container mx-auto flex h-20 items-center justify-between gap-6 px-4 md:px-8">
@@ -95,9 +101,15 @@ export function Navbar() {
                     </div>
 
                     {categories.length === 0 ? (
-                      <p className="px-3 py-6 text-sm text-muted-foreground">Aucune catégorie pour le moment.</p>
+                      <p className="px-3 py-6 text-sm text-muted-foreground">
+                        Aucune catégorie pour le moment.
+                      </p>
                     ) : (
-                      <motion.div className="mt-4 flex flex-wrap gap-4 overflow-hidden px-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                      <motion.div
+                        className="mt-4 flex flex-wrap gap-4 overflow-hidden px-2"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                      >
                         {categories.map((cat, i) => (
                           <motion.div
                             key={cat.id}
@@ -112,7 +124,11 @@ export function Navbar() {
                               className="flex items-center gap-3 w-full"
                             >
                               <span className="h-12 w-12 shrink-0 overflow-hidden rounded-lg">
-                                <CategoryImage category={cat} className="h-12 w-12" rounded="rounded-lg" />
+                                <CategoryImage
+                                  category={cat}
+                                  className="h-12 w-12"
+                                  rounded="rounded-lg"
+                                />
                               </span>
                               <span className="line-clamp-2">{cat.name}</span>
                             </Link>
@@ -174,7 +190,9 @@ export function Navbar() {
               ))}
               {categories.length > 0 && (
                 <li className="mt-2 border-t border-border pt-3">
-                  <p className="px-4 pb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">Catégories</p>
+                  <p className="px-4 pb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    Catégories
+                  </p>
                   <div className="grid grid-cols-2 gap-2 px-2">
                     {categories.map((cat) => (
                       <Link
@@ -184,7 +202,11 @@ export function Navbar() {
                         className="flex items-center gap-2 rounded-xl bg-secondary p-2 text-sm font-semibold"
                       >
                         <span className="h-10 w-10 shrink-0 overflow-hidden rounded-lg">
-                          <CategoryImage category={cat} className="h-10 w-10" rounded="rounded-lg" />
+                          <CategoryImage
+                            category={cat}
+                            className="h-10 w-10"
+                            rounded="rounded-lg"
+                          />
                         </span>
                         <span className="line-clamp-2 text-xs">{cat.name}</span>
                       </Link>

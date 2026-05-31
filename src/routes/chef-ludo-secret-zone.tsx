@@ -15,7 +15,9 @@ import { slugifyTitle } from "@/lib/slugify";
 import type { Ingredient, Instruction, Recipe } from "@/lib/recipes";
 
 export const Route = createFileRoute("/chef-ludo-secret-zone")({
-  head: () => ({ meta: [{ title: "Espace Ludo" }, { name: "robots", content: "noindex,nofollow" }] }),
+  head: () => ({
+    meta: [{ title: "Espace Ludo" }, { name: "robots", content: "noindex,nofollow" }],
+  }),
   component: LudoAdmin,
 });
 
@@ -74,11 +76,17 @@ function LudoAdmin() {
   }, [mounted]);
 
   if (!mounted || phase === "boot") {
-    return <div className="container mx-auto py-32 text-center text-muted-foreground">Chargement…</div>;
+    return (
+      <div className="container mx-auto py-32 text-center text-muted-foreground">Chargement…</div>
+    );
   }
   if (phase === "guest") return <LoginCard />;
   if (phase === "checking_role") {
-    return <div className="container mx-auto py-32 text-center text-muted-foreground">Vérification des droits…</div>;
+    return (
+      <div className="container mx-auto py-32 text-center text-muted-foreground">
+        Vérification des droits…
+      </div>
+    );
   }
   if (phase === "not_admin") return <NotAuthorized />;
   return <AdminPanel />;
@@ -91,7 +99,10 @@ function LoginCard() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const res = authSchema.safeParse(form);
-    if (!res.success) { toast.error(res.error.issues[0].message); return; }
+    if (!res.success) {
+      toast.error(res.error.issues[0].message);
+      return;
+    }
     setBusy(true);
     try {
       const { error } = await supabase.auth.signInWithPassword(res.data);
@@ -99,26 +110,55 @@ function LoginCard() {
       toast.success("Bienvenue Ludo !");
     } catch (err) {
       toast.error(humanizeError(err));
-    } finally { setBusy(false); }
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
     <div className="container mx-auto flex min-h-[70vh] items-center justify-center px-4">
       <div className="w-full max-w-md rounded-3xl border border-border bg-card p-8 shadow-[var(--shadow-warm)]">
         <div className="text-center">
-          <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-[var(--gradient-warm)] text-primary-foreground"><ChefHat className="h-6 w-6" /></div>
+          <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-[var(--gradient-warm)] text-primary-foreground">
+            <ChefHat className="h-6 w-6" />
+          </div>
           <p className="mt-4 font-hand text-2xl text-primary">Espace privé</p>
           <h1 className="mt-1 font-display text-3xl font-bold">Bonjour Ludo</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Connectez-vous pour gérer vos recettes.</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Connectez-vous pour gérer vos recettes.
+          </p>
         </div>
         <form onSubmit={submit} className="mt-6 space-y-4">
-          <input type="email" autoComplete="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="Email" className="h-12 w-full rounded-xl border-2 border-border bg-background px-4 text-sm outline-none focus:border-primary" />
-          <input type="password" autoComplete="current-password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} placeholder="Mot de passe" className="h-12 w-full rounded-xl border-2 border-border bg-background px-4 text-sm outline-none focus:border-primary" />
-          <button disabled={busy} className="w-full rounded-full bg-primary py-3 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-warm)] transition-transform hover:scale-[1.02] disabled:opacity-60">
+          <input
+            type="email"
+            autoComplete="email"
+            value={form.email}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
+            placeholder="Email"
+            className="h-12 w-full rounded-xl border-2 border-border bg-background px-4 text-sm outline-none focus:border-primary"
+          />
+          <input
+            type="password"
+            autoComplete="current-password"
+            value={form.password}
+            onChange={(e) => setForm({ ...form, password: e.target.value })}
+            placeholder="Mot de passe"
+            className="h-12 w-full rounded-xl border-2 border-border bg-background px-4 text-sm outline-none focus:border-primary"
+          />
+          <button
+            disabled={busy}
+            className="w-full rounded-full bg-primary py-3 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-warm)] transition-transform hover:scale-[1.02] disabled:opacity-60"
+          >
             {busy ? "…" : "Se connecter"}
           </button>
         </form>
-        <p className="mt-6 text-center text-xs text-muted-foreground">Si vous n'êtes pas Ludo, retournez à <Link to="/" className="text-primary hover:underline">l'accueil</Link>.</p>
+        <p className="mt-6 text-center text-xs text-muted-foreground">
+          Si vous n'êtes pas Ludo, retournez à{" "}
+          <Link to="/" className="text-primary hover:underline">
+            l'accueil
+          </Link>
+          .
+        </p>
       </div>
     </div>
   );
@@ -134,7 +174,12 @@ function NotAuthorized() {
     <div className="container mx-auto py-24 text-center">
       <h1 className="font-display text-4xl font-bold">Accès réservé</h1>
       <p className="mt-3 text-muted-foreground">Ce compte n'a pas les droits d'administration.</p>
-      <button onClick={() => void signOutAndLeave()} className="mt-6 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground">Se déconnecter</button>
+      <button
+        onClick={() => void signOutAndLeave()}
+        className="mt-6 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground"
+      >
+        Se déconnecter
+      </button>
     </div>
   );
 }
@@ -146,8 +191,14 @@ function AdminPanel() {
   const [creating, setCreating] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
 
-  const { data: recipes = [], refetch } = useQuery({ queryKey: ["dash-recipes"], queryFn: listAdminRecipes });
-  const { data: cats = [] } = useQuery({ queryKey: ["admin-categories"], queryFn: listCategoriesForAdmin });
+  const { data: recipes = [], refetch } = useQuery({
+    queryKey: ["dash-recipes"],
+    queryFn: listAdminRecipes,
+  });
+  const { data: cats = [] } = useQuery({
+    queryKey: ["admin-categories"],
+    queryFn: listCategoriesForAdmin,
+  });
 
   const logout = async () => {
     setLoggingOut(true);
@@ -164,16 +215,22 @@ function AdminPanel() {
   const del = async (id: string) => {
     if (!confirm("Supprimer cette recette ?")) return;
     const { error } = await supabase.from("recipes").delete().eq("id", id);
-    if (error) { toast.error(error.message); return; }
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     toast.success("Recette supprimée");
-    refetch(); qc.invalidateQueries({ queryKey: ["recipes"] });
+    refetch();
+    qc.invalidateQueries({ queryKey: ["recipes"] });
   };
 
   return (
     <div className="container mx-auto px-4 py-12 md:px-8">
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="grid h-12 w-12 place-items-center rounded-full bg-primary text-primary-foreground"><ChefHat className="h-5 w-5" /></div>
+          <div className="grid h-12 w-12 place-items-center rounded-full bg-primary text-primary-foreground">
+            <ChefHat className="h-5 w-5" />
+          </div>
           <div>
             <h1 className="font-display text-3xl font-bold">Espace Ludo</h1>
             <p className="text-sm text-muted-foreground">Vos recettes, vos stats, votre cuisine.</p>
@@ -181,17 +238,36 @@ function AdminPanel() {
         </div>
         <div className="flex gap-2">
           {tab === "recipes" && (
-            <button onClick={() => setCreating(true)} className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"><Plus className="h-4 w-4" /> Nouvelle recette</button>
+            <button
+              onClick={() => setCreating(true)}
+              className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
+            >
+              <Plus className="h-4 w-4" /> Nouvelle recette
+            </button>
           )}
-          <button disabled={loggingOut} onClick={() => void logout()} className="inline-flex items-center gap-2 rounded-full bg-secondary px-4 py-2 text-sm font-semibold disabled:opacity-60"><LogOut className="h-4 w-4" /> {loggingOut ? "Déconnexion…" : "Sortir"}</button>
+          <button
+            disabled={loggingOut}
+            onClick={() => void logout()}
+            className="inline-flex items-center gap-2 rounded-full bg-secondary px-4 py-2 text-sm font-semibold disabled:opacity-60"
+          >
+            <LogOut className="h-4 w-4" /> {loggingOut ? "Déconnexion…" : "Sortir"}
+          </button>
         </div>
       </header>
 
       <div className="mt-8 grid gap-4 md:grid-cols-4">
         <Stat label="Recettes" value={recipes.length} />
         <Stat label="Catégories" value={cats.length} />
-        <Stat label="Vues totales" value={recipes.reduce((s, r) => s + r.views, 0)} icon={<Eye className="h-4 w-4" />} />
-        <Stat label="J'aime totaux" value={recipes.reduce((s, r) => s + r.likes, 0)} icon={<Heart className="h-4 w-4" />} />
+        <Stat
+          label="Vues totales"
+          value={recipes.reduce((s, r) => s + r.views, 0)}
+          icon={<Eye className="h-4 w-4" />}
+        />
+        <Stat
+          label="J'aime totaux"
+          value={recipes.reduce((s, r) => s + r.likes, 0)}
+          icon={<Heart className="h-4 w-4" />}
+        />
       </div>
 
       <div className="mt-8 flex gap-2 rounded-full bg-secondary p-1">
@@ -216,69 +292,107 @@ function AdminPanel() {
           <CategoryManager />
         </div>
       ) : (
-      <div className="mt-10 overflow-hidden rounded-3xl border border-border bg-card">
-        <table className="w-full text-sm">
-          <thead className="bg-secondary text-left">
-            <tr><th className="p-4">Titre</th><th className="p-4 hidden md:table-cell">Catégorie</th><th className="p-4 hidden lg:table-cell">Statut</th><th className="p-4 hidden md:table-cell">Vues</th><th className="p-4 hidden md:table-cell">♥</th><th className="p-4">Actions</th></tr>
-          </thead>
-          <tbody>
-            {recipes.map(r => (
-              <tr key={r.id} className="border-t border-border">
-                <td className="p-4 font-semibold">
-                  <Link to={`/recette/${r.id}`} className="hover:text-primary hover:underline">
-                    {r.title} {r.featured && "⭐"}
-                  </Link>
-                </td>
-                <td className="p-4 hidden md:table-cell">
-                  {r.category ? (
-                    <span className="inline-flex items-center gap-2">
-                      <span className="h-8 w-8 overflow-hidden rounded-lg">
-                        <CategoryImage category={r.category} className="h-8 w-8" rounded="rounded-lg" />
-                      </span>
-                      {r.category.name}
-                    </span>
-                  ) : (
-                    "—"
-                  )}
-                </td>
-                <td className="p-4 hidden lg:table-cell">
-                  <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${r.status === "published" ? "bg-primary/15 text-primary" : "bg-secondary text-muted-foreground"}`}>
-                    {r.status === "published" ? "Publiée" : "Brouillon"}
-                  </span>
-                </td>
-                <td className="p-4 hidden md:table-cell">{r.views}</td>
-                <td className="p-4 hidden md:table-cell">{r.likes}</td>
-                <td className="p-4">
-                  <div className="flex gap-2">
-                    <Link to={`/recette/${r.id}`} className="rounded-full bg-secondary p-2 hover:bg-primary hover:text-primary-foreground" title="Voir la recette"><ExternalLink className="h-4 w-4" /></Link>
-                    <button onClick={() => setEditing(r)} className="rounded-full bg-secondary p-2 hover:bg-primary hover:text-primary-foreground" title="Modifier"><Pencil className="h-4 w-4" /></button>
-                    <button onClick={() => del(r.id)} className="rounded-full bg-secondary p-2 hover:bg-destructive hover:text-destructive-foreground" title="Supprimer"><Trash2 className="h-4 w-4" /></button>
-                  </div>
-                </td>
+        <div className="mt-10 overflow-hidden rounded-3xl border border-border bg-card">
+          <table className="w-full text-sm">
+            <thead className="bg-secondary text-left">
+              <tr>
+                <th className="p-4">Titre</th>
+                <th className="p-4 hidden md:table-cell">Catégorie</th>
+                <th className="p-4 hidden lg:table-cell">Statut</th>
+                <th className="p-4 hidden md:table-cell">Vues</th>
+                <th className="p-4 hidden md:table-cell">♥</th>
+                <th className="p-4">Actions</th>
               </tr>
-            ))}
-            {recipes.length === 0 && (
-              <tr><td colSpan={6} className="p-8 text-center text-muted-foreground">Aucune recette pour l'instant. Cliquez sur « Nouvelle recette ».</td></tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {recipes.map((r) => (
+                <tr key={r.id} className="border-t border-border">
+                  <td className="p-4 font-semibold">
+                    <Link to={`/recette/${r.id}`} className="hover:text-primary hover:underline">
+                      {r.title} {r.featured && "⭐"}
+                    </Link>
+                  </td>
+                  <td className="p-4 hidden md:table-cell">
+                    {r.category ? (
+                      <span className="inline-flex items-center gap-2">
+                        <span className="h-8 w-8 overflow-hidden rounded-lg">
+                          <CategoryImage
+                            category={r.category}
+                            className="h-8 w-8"
+                            rounded="rounded-lg"
+                          />
+                        </span>
+                        {r.category.name}
+                      </span>
+                    ) : (
+                      "—"
+                    )}
+                  </td>
+                  <td className="p-4 hidden lg:table-cell">
+                    <span
+                      className={`rounded-full px-2.5 py-1 text-xs font-semibold ${r.status === "published" ? "bg-primary/15 text-primary" : "bg-secondary text-muted-foreground"}`}
+                    >
+                      {r.status === "published" ? "Publiée" : "Brouillon"}
+                    </span>
+                  </td>
+                  <td className="p-4 hidden md:table-cell">{r.views}</td>
+                  <td className="p-4 hidden md:table-cell">{r.likes}</td>
+                  <td className="p-4">
+                    <div className="flex gap-2">
+                      <Link
+                        to={`/recette/${r.id}`}
+                        className="rounded-full bg-secondary p-2 hover:bg-primary hover:text-primary-foreground"
+                        title="Voir la recette"
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                      </Link>
+                      <button
+                        onClick={() => setEditing(r)}
+                        className="rounded-full bg-secondary p-2 hover:bg-primary hover:text-primary-foreground"
+                        title="Modifier"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => del(r.id)}
+                        className="rounded-full bg-secondary p-2 hover:bg-destructive hover:text-destructive-foreground"
+                        title="Supprimer"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {recipes.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="p-8 text-center text-muted-foreground">
+                    Aucune recette pour l'instant. Cliquez sur « Nouvelle recette ».
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       )}
 
       {tab === "recipes" && (creating || editing) && (
         <RecipeForm
           recipe={editing}
           categories={cats}
-          onClose={() => { setCreating(false); setEditing(null); }}
+          onClose={() => {
+            setCreating(false);
+            setEditing(null);
+          }}
           onSaved={() => {
-        refetch();
-        qc.invalidateQueries({ queryKey: ["recipes"] });
-        qc.invalidateQueries({ queryKey: ["recipes", "all"] });
-        qc.invalidateQueries({ queryKey: ["recipes", "latest"] });
-        qc.invalidateQueries({ queryKey: ["recipes", "featured"] });
-        setCreating(false);
-        setEditing(null);
-      }}
+            refetch();
+            qc.invalidateQueries({ queryKey: ["recipes"] });
+            qc.invalidateQueries({ queryKey: ["recipes", "all"] });
+            qc.invalidateQueries({ queryKey: ["recipes", "latest"] });
+            qc.invalidateQueries({ queryKey: ["recipes", "featured"] });
+            setCreating(false);
+            setEditing(null);
+          }}
         />
       )}
     </div>
@@ -288,7 +402,10 @@ function AdminPanel() {
 function Stat({ label, value, icon }: { label: string; value: number; icon?: React.ReactNode }) {
   return (
     <div className="rounded-3xl border border-border bg-card p-5">
-      <p className="flex items-center gap-1.5 text-xs uppercase tracking-wider text-muted-foreground">{icon}{label}</p>
+      <p className="flex items-center gap-1.5 text-xs uppercase tracking-wider text-muted-foreground">
+        {icon}
+        {label}
+      </p>
       <p className="mt-1 font-display text-3xl font-bold">{value.toLocaleString("fr-FR")}</p>
     </div>
   );
@@ -296,7 +413,12 @@ function Stat({ label, value, icon }: { label: string; value: number; icon?: Rea
 
 const recipeSchema = z.object({
   title: z.string().trim().min(3).max(200),
-  slug: z.string().trim().min(3).max(200).regex(/^[a-z0-9-]+$/, "slug: lettres, chiffres, tirets"),
+  slug: z
+    .string()
+    .trim()
+    .min(3)
+    .max(200)
+    .regex(/^[a-z0-9-]+$/, "slug: lettres, chiffres, tirets"),
   description: z.string().trim().min(10).max(2000),
   category_id: z.string().uuid().nullable(),
   prep_time: z.coerce.number().min(0).max(999),
@@ -344,7 +466,17 @@ function normalizeInstructionsForSave(items: Instruction[]): Instruction[] {
   return numbered.length > 0 ? numbered : [{ step: 1, text: "" }];
 }
 
-function RecipeForm({ recipe, categories, onClose, onSaved }: { recipe: Recipe | null; categories: { id: string; name: string; image_url?: string | null }[]; onClose: () => void; onSaved: () => void }) {
+function RecipeForm({
+  recipe,
+  categories,
+  onClose,
+  onSaved,
+}: {
+  recipe: Recipe | null;
+  categories: { id: string; name: string; image_url?: string | null }[];
+  onClose: () => void;
+  onSaved: () => void;
+}) {
   const [form, setForm] = useState({
     title: recipe?.title ?? "",
     description: recipe?.description ?? "",
@@ -356,8 +488,12 @@ function RecipeForm({ recipe, categories, onClose, onSaved }: { recipe: Recipe |
     cover_image: recipe?.cover_image ?? "",
     featured: recipe?.featured ?? false,
     status: (recipe?.status ?? "published") as "draft" | "published",
-    ingredients: normalizeIngredients((recipe?.ingredients as Ingredient[] | undefined) ?? [{ name: "", quantity: "", unit: "" }]),
-    instructions: renumberInstructionsKeepEmpty((recipe?.instructions as Instruction[] | undefined) ?? [{ step: 1, text: "" }]),
+    ingredients: normalizeIngredients(
+      (recipe?.ingredients as Ingredient[] | undefined) ?? [{ name: "", quantity: "", unit: "" }],
+    ),
+    instructions: renumberInstructionsKeepEmpty(
+      (recipe?.instructions as Instruction[] | undefined) ?? [{ step: 1, text: "" }],
+    ),
     chef_notes: (recipe as any)?.chef_notes ?? recipe?.astuces ?? "",
   });
   const [busy, setBusy] = useState(false);
@@ -389,9 +525,12 @@ function RecipeForm({ recipe, categories, onClose, onSaved }: { recipe: Recipe |
     const ext = file.name.split(".").pop();
     const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
     const { error } = await supabase.storage.from("recipe-images").upload(path, file);
-    if (error) { toast.error(error.message); return; }
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     const { data } = supabase.storage.from("recipe-images").getPublicUrl(path);
-    setForm(f => ({ ...f, cover_image: data.publicUrl }));
+    setForm((f) => ({ ...f, cover_image: data.publicUrl }));
     toast.success("Image envoyée");
   };
 
@@ -400,11 +539,19 @@ function RecipeForm({ recipe, categories, onClose, onSaved }: { recipe: Recipe |
     setBusy(true);
     try {
       const slugAuto = slugifyTitle(form.title);
-      const base = recipeSchema.parse({ ...form, slug: slugAuto, category_id: form.category_id || null });
+      const base = recipeSchema.parse({
+        ...form,
+        slug: slugAuto,
+        category_id: form.category_id || null,
+      });
       const ingredients = normalizeIngredients(form.ingredients);
       const instructions = normalizeInstructionsForSave(form.instructions);
-      const parsedIngredients = z.array(ingredientSchema).parse(ingredients.filter((i) => i.name.trim().length > 0));
-      const parsedInstructions = z.array(instructionSchema).parse(instructions.filter((s) => s.text.trim().length > 0));
+      const parsedIngredients = z
+        .array(ingredientSchema)
+        .parse(ingredients.filter((i) => i.name.trim().length > 0));
+      const parsedInstructions = z
+        .array(instructionSchema)
+        .parse(instructions.filter((s) => s.text.trim().length > 0));
 
       let publishedPatch: { published_at: string | null } = {};
       if (recipe && recipe.status === "draft" && base.status === "published") {
@@ -422,7 +569,12 @@ function RecipeForm({ recipe, categories, onClose, onSaved }: { recipe: Recipe |
       const executeSave = async (payloadToSend: typeof payload) =>
         recipe
           ? await supabase.from("recipes").update(payloadToSend).eq("id", recipe.id)
-          : await supabase.from("recipes").insert({ ...payloadToSend, published_at: base.status === "published" ? new Date().toISOString() : null });
+          : await supabase
+              .from("recipes")
+              .insert({
+                ...payloadToSend,
+                published_at: base.status === "published" ? new Date().toISOString() : null,
+              });
 
       let result = await executeSave(payload);
       if (result.error && result.error.message?.includes("chef_notes")) {
@@ -431,25 +583,43 @@ function RecipeForm({ recipe, categories, onClose, onSaved }: { recipe: Recipe |
       }
       if (result.error) throw result.error;
       toast.success(recipe ? "Recette mise à jour" : "Recette créée");
-      try { localStorage.removeItem(`recipe-form-${recipe?.id ?? "new"}`); } catch {}
+      try {
+        localStorage.removeItem(`recipe-form-${recipe?.id ?? "new"}`);
+      } catch {}
       onSaved();
     } catch (err) {
       toast.error(humanizeError(err));
-    } finally { setBusy(false); }
+    } finally {
+      setBusy(false);
+    }
   };
 
   const handleClose = () => {
-    try { localStorage.removeItem(storageKey); } catch {}
+    try {
+      localStorage.removeItem(storageKey);
+    } catch {}
     onClose();
   };
 
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-espresso/70 p-4">
-      <motion.form onSubmit={save} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-card p-6 shadow-[var(--shadow-deep)] relative">
-        <button type="button" onClick={handleClose} aria-label="Fermer" className="absolute right-4 top-4 rounded-full p-2 text-muted-foreground hover:bg-secondary hover:text-primary-foreground">
+      <motion.form
+        onSubmit={save}
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-card p-6 shadow-[var(--shadow-deep)] relative"
+      >
+        <button
+          type="button"
+          onClick={handleClose}
+          aria-label="Fermer"
+          className="absolute right-4 top-4 rounded-full p-2 text-muted-foreground hover:bg-secondary hover:text-primary-foreground"
+        >
           <X className="h-4 w-4" />
         </button>
-        <h2 className="font-display text-2xl font-bold">{recipe ? "Modifier" : "Nouvelle"} recette</h2>
+        <h2 className="font-display text-2xl font-bold">
+          {recipe ? "Modifier" : "Nouvelle"} recette
+        </h2>
         <div className="mt-4 space-y-3">
           <div>
             <input
@@ -461,39 +631,100 @@ function RecipeForm({ recipe, categories, onClose, onSaved }: { recipe: Recipe |
             <p className="mt-1.5 rounded-xl border border-border/60 bg-background/60 px-3 py-2 text-xs text-muted-foreground">
               <span className="font-semibold text-foreground/80">Lien automatique </span>
               /carnet-de-recettes/
-              <span className="font-mono font-semibold text-primary">{slugifyTitle(form.title) || "..."}</span>
+              <span className="font-mono font-semibold text-primary">
+                {slugifyTitle(form.title) || "..."}
+              </span>
             </p>
           </div>
-          <textarea placeholder="Description" value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={3} className="w-full rounded-xl border-2 border-border bg-background p-3 text-sm" />
+          <textarea
+            placeholder="Description"
+            value={form.description}
+            onChange={(e) => setForm({ ...form, description: e.target.value })}
+            rows={3}
+            className="w-full rounded-xl border-2 border-border bg-background p-3 text-sm"
+          />
           <div className="space-y-2">
-            <input placeholder="URL image de couverture" value={form.cover_image} onChange={e => setForm({ ...form, cover_image: e.target.value })} className="h-11 w-full rounded-xl border-2 border-border bg-background px-3 text-sm" />
+            <input
+              placeholder="URL image de couverture"
+              value={form.cover_image}
+              onChange={(e) => setForm({ ...form, cover_image: e.target.value })}
+              className="h-11 w-full rounded-xl border-2 border-border bg-background px-3 text-sm"
+            />
             <label className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border bg-background py-3 text-sm text-muted-foreground hover:border-primary">
               📷 Choisir une image (upload)
-              <input type="file" accept="image/*" className="hidden" onChange={e => e.target.files?.[0] && uploadImage(e.target.files[0])} />
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => e.target.files?.[0] && uploadImage(e.target.files[0])}
+              />
             </label>
-            {form.cover_image && <img src={form.cover_image} alt="" className="h-32 w-full rounded-xl object-cover" />}
+            {form.cover_image && (
+              <img src={form.cover_image} alt="" className="h-32 w-full rounded-xl object-cover" />
+            )}
           </div>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <input type="number" placeholder="Prép (min)" value={form.prep_time} onChange={e => setForm({ ...form, prep_time: +e.target.value })} className="h-11 rounded-xl border-2 border-border bg-background px-3 text-sm" />
-            <input type="number" placeholder="Cuisson" value={form.cook_time} onChange={e => setForm({ ...form, cook_time: +e.target.value })} className="h-11 rounded-xl border-2 border-border bg-background px-3 text-sm" />
-            <input type="number" placeholder="Portions" value={form.servings} onChange={e => setForm({ ...form, servings: +e.target.value })} className="h-11 rounded-xl border-2 border-border bg-background px-3 text-sm" />
-            <select value={form.difficulty} onChange={e => setForm({ ...form, difficulty: e.target.value as "Facile" | "Moyen" | "Difficile" })} className="h-11 rounded-xl border-2 border-border bg-background px-3 text-sm">
-              <option>Facile</option><option>Moyen</option><option>Difficile</option>
+            <input
+              type="number"
+              placeholder="Prép (min)"
+              value={form.prep_time}
+              onChange={(e) => setForm({ ...form, prep_time: +e.target.value })}
+              className="h-11 rounded-xl border-2 border-border bg-background px-3 text-sm"
+            />
+            <input
+              type="number"
+              placeholder="Cuisson"
+              value={form.cook_time}
+              onChange={(e) => setForm({ ...form, cook_time: +e.target.value })}
+              className="h-11 rounded-xl border-2 border-border bg-background px-3 text-sm"
+            />
+            <input
+              type="number"
+              placeholder="Portions"
+              value={form.servings}
+              onChange={(e) => setForm({ ...form, servings: +e.target.value })}
+              className="h-11 rounded-xl border-2 border-border bg-background px-3 text-sm"
+            />
+            <select
+              value={form.difficulty}
+              onChange={(e) =>
+                setForm({ ...form, difficulty: e.target.value as "Facile" | "Moyen" | "Difficile" })
+              }
+              className="h-11 rounded-xl border-2 border-border bg-background px-3 text-sm"
+            >
+              <option>Facile</option>
+              <option>Moyen</option>
+              <option>Difficile</option>
             </select>
           </div>
-          <select value={form.category_id} onChange={e => setForm({ ...form, category_id: e.target.value })} className="h-11 w-full rounded-xl border-2 border-border bg-background px-3 text-sm">
+          <select
+            value={form.category_id}
+            onChange={(e) => setForm({ ...form, category_id: e.target.value })}
+            className="h-11 w-full rounded-xl border-2 border-border bg-background px-3 text-sm"
+          >
             <option value="">— Sans catégorie —</option>
-            {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
           </select>
           <div className="rounded-2xl border border-border bg-background/50 p-4">
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className="text-sm font-semibold">Ingrédients</p>
-                <p className="text-xs text-muted-foreground">Saisie simple. Tu peux ajouter/supprimer des lignes.</p>
+                <p className="text-xs text-muted-foreground">
+                  Saisie simple. Tu peux ajouter/supprimer des lignes.
+                </p>
               </div>
               <button
                 type="button"
-                onClick={() => setForm((f) => ({ ...f, ingredients: [...f.ingredients, { name: "", quantity: "", unit: "" }] }))}
+                onClick={() =>
+                  setForm((f) => ({
+                    ...f,
+                    ingredients: [...f.ingredients, { name: "", quantity: "", unit: "" }],
+                  }))
+                }
                 className="inline-flex items-center gap-2 rounded-full bg-secondary px-3 py-2 text-xs font-semibold hover:bg-primary hover:text-primary-foreground"
               >
                 <Plus className="h-4 w-4" /> Ajouter
@@ -507,7 +738,9 @@ function RecipeForm({ recipe, categories, onClose, onSaved }: { recipe: Recipe |
                     onChange={(e) =>
                       setForm((f) => ({
                         ...f,
-                        ingredients: f.ingredients.map((x, i) => (i === idx ? { ...x, quantity: e.target.value } : x)),
+                        ingredients: f.ingredients.map((x, i) =>
+                          i === idx ? { ...x, quantity: e.target.value } : x,
+                        ),
                       }))
                     }
                     placeholder="Qté"
@@ -518,7 +751,9 @@ function RecipeForm({ recipe, categories, onClose, onSaved }: { recipe: Recipe |
                     onChange={(e) =>
                       setForm((f) => ({
                         ...f,
-                        ingredients: f.ingredients.map((x, i) => (i === idx ? { ...x, unit: e.target.value } : x)),
+                        ingredients: f.ingredients.map((x, i) =>
+                          i === idx ? { ...x, unit: e.target.value } : x,
+                        ),
                       }))
                     }
                     placeholder="Unité"
@@ -529,7 +764,9 @@ function RecipeForm({ recipe, categories, onClose, onSaved }: { recipe: Recipe |
                     onChange={(e) =>
                       setForm((f) => ({
                         ...f,
-                        ingredients: f.ingredients.map((x, i) => (i === idx ? { ...x, name: e.target.value } : x)),
+                        ingredients: f.ingredients.map((x, i) =>
+                          i === idx ? { ...x, name: e.target.value } : x,
+                        ),
                       }))
                     }
                     placeholder="Nom de l’ingrédient (ex: Farine)"
@@ -557,14 +794,19 @@ function RecipeForm({ recipe, categories, onClose, onSaved }: { recipe: Recipe |
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className="text-sm font-semibold">Étapes</p>
-                <p className="text-xs text-muted-foreground">Une étape = un bloc. L’ordre se renumérote automatiquement.</p>
+                <p className="text-xs text-muted-foreground">
+                  Une étape = un bloc. L’ordre se renumérote automatiquement.
+                </p>
               </div>
               <button
                 type="button"
                 onClick={() =>
                   setForm((f) => ({
                     ...f,
-                    instructions: renumberInstructionsKeepEmpty([...f.instructions, { step: f.instructions.length + 1, text: "" }]),
+                    instructions: renumberInstructionsKeepEmpty([
+                      ...f.instructions,
+                      { step: f.instructions.length + 1, text: "" },
+                    ]),
                   }))
                 }
                 className="inline-flex items-center gap-2 rounded-full bg-secondary px-3 py-2 text-xs font-semibold hover:bg-primary hover:text-primary-foreground"
@@ -596,7 +838,9 @@ function RecipeForm({ recipe, categories, onClose, onSaved }: { recipe: Recipe |
                       setForm((f) => ({
                         ...f,
                         instructions: renumberInstructionsKeepEmpty(
-                          f.instructions.map((x, i) => (i === idx ? { ...x, text: e.target.value } : x)),
+                          f.instructions.map((x, i) =>
+                            i === idx ? { ...x, text: e.target.value } : x,
+                          ),
                         ),
                       }))
                     }
@@ -613,18 +857,49 @@ function RecipeForm({ recipe, categories, onClose, onSaved }: { recipe: Recipe |
               <p className="text-sm font-semibold">Remarques du Chef</p>
               <p className="text-xs text-muted-foreground">Conseils, variantes, astuces</p>
             </div>
-            <textarea value={form.chef_notes} onChange={e => setForm({ ...form, chef_notes: e.target.value })} rows={4} placeholder="Par ex : Remplacez le beurre par du ghee pour plus de saveurs…" className="mt-3 w-full rounded-xl border-2 border-border bg-background p-3 text-sm" />
+            <textarea
+              value={form.chef_notes}
+              onChange={(e) => setForm({ ...form, chef_notes: e.target.value })}
+              rows={4}
+              placeholder="Par ex : Remplacez le beurre par du ghee pour plus de saveurs…"
+              className="mt-3 w-full rounded-xl border-2 border-border bg-background p-3 text-sm"
+            />
           </div>
           <div className="flex items-center gap-4">
-            <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.featured} onChange={e => setForm({ ...form, featured: e.target.checked })} /> Mise en avant ⭐</label>
-            <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value as "draft" | "published" })} className="h-9 rounded-xl border-2 border-border bg-background px-3 text-sm">
-              <option value="published">Publiée</option><option value="draft">Brouillon</option>
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={form.featured}
+                onChange={(e) => setForm({ ...form, featured: e.target.checked })}
+              />{" "}
+              Mise en avant ⭐
+            </label>
+            <select
+              value={form.status}
+              onChange={(e) =>
+                setForm({ ...form, status: e.target.value as "draft" | "published" })
+              }
+              className="h-9 rounded-xl border-2 border-border bg-background px-3 text-sm"
+            >
+              <option value="published">Publiée</option>
+              <option value="draft">Brouillon</option>
             </select>
           </div>
         </div>
         <div className="mt-5 flex gap-2">
-          <button type="button" onClick={handleClose} className="flex-1 rounded-full bg-secondary py-3 text-sm font-semibold">Fermer</button>
-          <button disabled={busy} className="flex-1 rounded-full bg-primary py-3 text-sm font-semibold text-primary-foreground disabled:opacity-60">{busy ? "…" : "Enregistrer"}</button>
+          <button
+            type="button"
+            onClick={handleClose}
+            className="flex-1 rounded-full bg-secondary py-3 text-sm font-semibold"
+          >
+            Fermer
+          </button>
+          <button
+            disabled={busy}
+            className="flex-1 rounded-full bg-primary py-3 text-sm font-semibold text-primary-foreground disabled:opacity-60"
+          >
+            {busy ? "…" : "Enregistrer"}
+          </button>
         </div>
       </motion.form>
     </div>

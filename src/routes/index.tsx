@@ -12,9 +12,16 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Les Petits Plats de Ludo — Cuisine généreuse, esprit chic" },
-      { name: "description", content: "Recettes signature de Ludo : éditorial, gourmand, généreux. Une cuisine racontée comme un magazine gastronomique." },
+      {
+        name: "description",
+        content:
+          "Recettes signature de Ludo : éditorial, gourmand, généreux. Une cuisine racontée comme un magazine gastronomique.",
+      },
       { property: "og:title", content: "Les Petits Plats de Ludo" },
-      { property: "og:description", content: "Cuisine généreuse, esprit chic. Les recettes signature de Ludo." },
+      {
+        property: "og:description",
+        content: "Cuisine généreuse, esprit chic. Les recettes signature de Ludo.",
+      },
     ],
     links: [{ rel: "canonical", href: "/" }],
   }),
@@ -36,14 +43,21 @@ const stagger = {
 
 /* ---------------- PAGE ---------------- */
 function HomePage() {
-  const { data: featured = [] } = useQuery({ queryKey: ["recipes", "featured"], queryFn: () => listPublishedRecipes({ featured: true, limit: 8 }) });
-  const { data: latest = [] } = useQuery({ queryKey: ["recipes", "latest"], queryFn: () => listPublishedRecipes({ limit: 12 }) });
+  const { data: featured = [] } = useQuery({
+    queryKey: ["recipes", "featured"],
+    queryFn: () => listPublishedRecipes({ featured: true, limit: 8 }),
+  });
+  const { data: latest = [] } = useQuery({
+    queryKey: ["recipes", "latest"],
+    queryFn: () => listPublishedRecipes({ limit: 12 }),
+  });
   const { data: categories = [] } = useQuery({ queryKey: ["categories"], queryFn: listCategories });
 
   const featuredPool = featured.length > 0 ? featured : latest.filter((r) => r.featured);
-  const heroRecipes = (featuredPool.length >= 8
-    ? featuredPool
-    : [...featuredPool, ...latest.filter((r) => !featuredPool.some((f) => f.id === r.id))]
+  const heroRecipes = (
+    featuredPool.length >= 8
+      ? featuredPool
+      : [...featuredPool, ...latest.filter((r) => !featuredPool.some((f) => f.id === r.id))]
   ).slice(0, 8);
 
   return (
@@ -85,31 +99,38 @@ function CommunityCard() {
         On se retrouve <em className="text-[var(--caramel)]">à table ?</em>
       </h3>
       <p className="mt-3 text-sm leading-relaxed text-[var(--espresso)]/75">
-        Des photos qui font saliver, des bêtises en cuisine, et zéro régime miracle.
-        Promis juré, craché (dans l'évier).
+        Des photos qui font saliver, des bêtises en cuisine, et zéro régime miracle. Promis juré,
+        craché (dans l'évier).
       </p>
 
       <div className="mt-5 space-y-2.5">
         <a
           href="https://www.facebook.com/people/les-petits-plats-de-ludo/61565572954499/"
-          target="_blank" rel="noopener noreferrer"
+          target="_blank"
+          rel="noopener noreferrer"
           className="group flex items-center justify-between rounded-xl border-2 border-[var(--espresso)] bg-[var(--cream)] px-4 py-3 text-sm font-semibold text-[var(--espresso)] shadow-[3px_3px_0_0_var(--espresso)] transition-all hover:-translate-y-0.5 hover:shadow-[5px_5px_0_0_var(--espresso)]"
         >
-          <span className="inline-flex items-center gap-2.5"><Facebook className="h-4 w-4" /> Facebook</span>
+          <span className="inline-flex items-center gap-2.5">
+            <Facebook className="h-4 w-4" /> Facebook
+          </span>
           <span className="font-hand text-base text-[var(--caramel)]">Viens jaser →</span>
         </a>
         <a
           href="#"
           className="group flex items-center justify-between rounded-xl border-2 border-[var(--espresso)] bg-[var(--cream)] px-4 py-3 text-sm font-semibold text-[var(--espresso)] shadow-[3px_3px_0_0_var(--espresso)] transition-all hover:-translate-y-0.5 hover:shadow-[5px_5px_0_0_var(--espresso)]"
         >
-          <span className="inline-flex items-center gap-2.5"><Instagram className="h-4 w-4" /> Instagram</span>
+          <span className="inline-flex items-center gap-2.5">
+            <Instagram className="h-4 w-4" /> Instagram
+          </span>
           <span className="font-hand text-base text-[var(--caramel)]">Mate la déco →</span>
         </a>
         <a
           href="mailto:ludo@example.com"
           className="group flex items-center justify-between rounded-xl border-2 border-[var(--espresso)] bg-[var(--cream)] px-4 py-3 text-sm font-semibold text-[var(--espresso)] shadow-[3px_3px_0_0_var(--espresso)] transition-all hover:-translate-y-0.5 hover:shadow-[5px_5px_0_0_var(--espresso)]"
         >
-          <span className="inline-flex items-center gap-2.5"><Mail className="h-4 w-4" /> Newsletter</span>
+          <span className="inline-flex items-center gap-2.5">
+            <Mail className="h-4 w-4" /> Newsletter
+          </span>
           <span className="font-hand text-base text-[var(--caramel)]">M'écrire →</span>
         </a>
       </div>
@@ -127,16 +148,24 @@ function RencontreCard() {
       transition={{ duration: 0.7, ease: EASE_OUT, delay: 0.1 }}
       className="relative overflow-hidden rounded-[1.75rem] bg-[var(--espresso)] p-6 text-[var(--cream)] shadow-[var(--shadow-deep)]"
     >
-      <div aria-hidden className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-[var(--caramel)]/25 blur-3xl" />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-[var(--caramel)]/25 blur-3xl"
+      />
 
       <p className="text-[10px] uppercase tracking-[0.3em] text-[var(--caramel)]">★ Rencontre ★</p>
 
       <div className="mt-4 overflow-hidden rounded-2xl border-2 border-[var(--cream)]/20">
-        <img src={ludoPortrait} alt="Portrait de Ludo" className="aspect-[4/5] w-full object-cover" />
+        <img
+          src={ludoPortrait}
+          alt="Portrait de Ludo"
+          className="aspect-[4/5] w-full object-cover"
+        />
       </div>
 
       <blockquote className="relative mt-5 font-display text-xl font-bold leading-snug">
-        « Je cuisine comme on raconte une <em className="text-[var(--caramel)]">bonne histoire</em>. »
+        « Je cuisine comme on raconte une <em className="text-[var(--caramel)]">bonne histoire</em>.
+        »
       </blockquote>
       <p className="mt-3 text-sm leading-relaxed text-[var(--cream)]/75">
         Autodidacte, gourmand, jamais avare d'un calembour devant un four.
@@ -152,7 +181,6 @@ function RencontreCard() {
   );
 }
 
-
 /* ============== BENTO CATEGORIES ============== */
 function BentoCategories({ categories }: { categories: Category[] }) {
   // Bento layout — 5 tuiles asymétriques
@@ -167,28 +195,49 @@ function BentoCategories({ categories }: { categories: Category[] }) {
   return (
     <section className="relative py-24 md:py-32">
       <div className="container mx-auto px-4 md:px-8">
-        <SectionKicker eyebrow="L'index" title="Par envie du moment" intro="Trois familles, un seul mot d'ordre : se régaler avec goût." />
+        <SectionKicker
+          eyebrow="L'index"
+          title="Par envie du moment"
+          intro="Trois familles, un seul mot d'ordre : se régaler avec goût."
+        />
 
         <motion.div
-          variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-80px" }}
+          variants={stagger}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-80px" }}
           className="mt-14 grid auto-rows-[200px] grid-cols-1 gap-4 md:grid-cols-4 md:gap-5"
         >
           {categories.map((c, i) => (
-            <motion.div key={c.id} variants={fadeUp} className={`group relative ${layouts[i] ?? "md:col-span-1 md:row-span-1"}`}>
+            <motion.div
+              key={c.id}
+              variants={fadeUp}
+              className={`group relative ${layouts[i] ?? "md:col-span-1 md:row-span-1"}`}
+            >
               <Link
                 to="/carnet-de-recettes/categorie/$slug"
                 params={{ slug: c.slug }}
                 className="relative block h-full w-full overflow-hidden rounded-[1.75rem] bg-[var(--secondary)] shadow-[var(--shadow-soft)] transition-shadow duration-500 hover:shadow-[var(--shadow-deep)]"
               >
-                <CategoryImage category={c} className="absolute inset-0 transition-transform duration-[1200ms] ease-out group-hover:scale-110" rounded="rounded-none" />
+                <CategoryImage
+                  category={c}
+                  className="absolute inset-0 transition-transform duration-[1200ms] ease-out group-hover:scale-110"
+                  rounded="rounded-none"
+                />
                 <div className="absolute inset-0 bg-gradient-to-t from-[var(--espresso)]/90 via-[var(--espresso)]/20 to-transparent" />
 
                 {/* Glass label */}
                 <div className="absolute inset-x-5 bottom-5 rounded-2xl glass-dark p-4 text-[var(--cream)] transition-transform duration-500 group-hover:-translate-y-1">
                   <div className="flex items-center justify-between gap-3">
                     <div>
-                      <p className="font-display text-2xl font-bold leading-none md:text-3xl">{c.name}</p>
-                      {c.description && <p className="mt-1.5 line-clamp-1 text-xs text-[var(--cream)]/80">{c.description}</p>}
+                      <p className="font-display text-2xl font-bold leading-none md:text-3xl">
+                        {c.name}
+                      </p>
+                      {c.description && (
+                        <p className="mt-1.5 line-clamp-1 text-xs text-[var(--cream)]/80">
+                          {c.description}
+                        </p>
+                      )}
                     </div>
                     <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[var(--cream)] text-[var(--espresso)] transition-transform duration-500 group-hover:rotate-45">
                       <ArrowRight className="h-4 w-4" />
@@ -208,11 +257,22 @@ function BentoCategories({ categories }: { categories: Category[] }) {
 function LatestRecipes({ recipes }: { recipes: Recipe[] }) {
   return (
     <section className="relative bg-[var(--secondary)] py-24 md:py-32">
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[var(--cream)] to-transparent" />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[var(--cream)] to-transparent"
+      />
       <div className="container relative mx-auto px-4 md:px-8">
         <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
-          <SectionKicker align="left" eyebrow="Le journal" title="Dernières recettes" intro="Les nouveautés qui font frémir mes carnets." />
-          <Link to="/carnet-de-recettes" className="group inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.2em] text-[var(--espresso)] underline-offset-8 hover:underline">
+          <SectionKicker
+            align="left"
+            eyebrow="Le journal"
+            title="Dernières recettes"
+            intro="Les nouveautés qui font frémir mes carnets."
+          />
+          <Link
+            to="/carnet-de-recettes"
+            className="group inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.2em] text-[var(--espresso)] underline-offset-8 hover:underline"
+          >
             Toutes les recettes
             <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
           </Link>
@@ -223,83 +283,130 @@ function LatestRecipes({ recipes }: { recipes: Recipe[] }) {
             Aucune recette publiée pour le moment. Ajoutez-en depuis le dashboard Ludo.
           </p>
         ) : (
-        <motion.div
-          variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-60px" }}
-          className="mt-14 grid gap-7 md:grid-cols-2 lg:grid-cols-3"
-        >
-          {recipes.map((r) => {
-            const fb = funnyBadge(r.slug);
-            const stickerCls = fb.tone === "tomato" ? "sticker--tomato" : fb.tone === "slate" ? "sticker--slate" : "sticker--sage";
-            return (
-              <motion.article key={r.id} variants={fadeUp} whileHover={{ y: -8, rotate: -0.4 }} transition={{ type: "spring", stiffness: 200, damping: 18 }} className="h-full">
-                <Link
-                  to={`/recette/${r.id}`}
-                  className="group flex h-full cursor-pointer flex-col card-grimoire overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--caramel)]"
-                  aria-label={`Voir la recette : ${r.title}`}
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-60px" }}
+            className="mt-14 grid gap-7 md:grid-cols-2 lg:grid-cols-3"
+          >
+            {recipes.map((r) => {
+              const fb = funnyBadge(r.slug);
+              const stickerCls =
+                fb.tone === "tomato"
+                  ? "sticker--tomato"
+                  : fb.tone === "slate"
+                    ? "sticker--slate"
+                    : "sticker--sage";
+              return (
+                <motion.article
+                  key={r.id}
+                  variants={fadeUp}
+                  whileHover={{ y: -8, rotate: -0.4 }}
+                  transition={{ type: "spring", stiffness: 200, damping: 18 }}
+                  className="h-full"
                 >
-                  <div className="relative aspect-[4/5] shrink-0 overflow-hidden bg-[var(--muted)]">
-                    {r.cover_image ? (
-                      <img src={r.cover_image} alt={r.title} loading="lazy" className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110" />
-                    ) : (
-                      <div className="grid h-full w-full place-items-center text-7xl">🍽️</div>
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[var(--espresso)]/55 via-transparent to-transparent" />
-
-                    {/* badges top — flex-wrap pour gérer les textes longs proprement */}
-                    <div className="absolute inset-x-3 top-3 flex flex-wrap items-start justify-between gap-2">
-                      {r.category ? (
-                        <span className="inline-flex max-w-[70%] items-center gap-2 rounded-full border-2 border-[var(--espresso)] bg-[var(--cream)] py-1 pl-1 pr-3 text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--espresso)] shadow-[3px_3px_0_0_var(--espresso)]">
-                          <span className="h-6 w-6 shrink-0 overflow-hidden rounded-full">
-                            <CategoryImage category={r.category} className="h-6 w-6" rounded="rounded-full" />
-                          </span>
-                          <span className="truncate">{r.category.name}</span>
-                        </span>
+                  <Link
+                    to={`/recette/${r.id}`}
+                    className="group flex h-full cursor-pointer flex-col card-grimoire overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--caramel)]"
+                    aria-label={`Voir la recette : ${r.title}`}
+                  >
+                    <div className="relative aspect-[4/5] shrink-0 overflow-hidden bg-[var(--muted)]">
+                      {r.cover_image ? (
+                        <img
+                          src={r.cover_image}
+                          alt={r.title}
+                          loading="lazy"
+                          className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110"
+                        />
                       ) : (
-                        <span />
+                        <div className="grid h-full w-full place-items-center text-7xl">🍽️</div>
                       )}
-                      <span className={`sticker ${stickerCls} max-w-[55%] whitespace-normal break-words text-right leading-tight`}>
-                        {fb.label}
+                      <div className="absolute inset-0 bg-gradient-to-t from-[var(--espresso)]/55 via-transparent to-transparent" />
+
+                      {/* badges top — flex-wrap pour gérer les textes longs proprement */}
+                      <div className="absolute inset-x-3 top-3 flex flex-wrap items-start justify-between gap-2">
+                        {r.category ? (
+                          <span className="inline-flex max-w-[70%] items-center gap-2 rounded-full border-2 border-[var(--espresso)] bg-[var(--cream)] py-1 pl-1 pr-3 text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--espresso)] shadow-[3px_3px_0_0_var(--espresso)]">
+                            <span className="h-6 w-6 shrink-0 overflow-hidden rounded-full">
+                              <CategoryImage
+                                category={r.category}
+                                className="h-6 w-6"
+                                rounded="rounded-full"
+                              />
+                            </span>
+                            <span className="truncate">{r.category.name}</span>
+                          </span>
+                        ) : (
+                          <span />
+                        )}
+                        <span
+                          className={`sticker ${stickerCls} max-w-[55%] whitespace-normal break-words text-right leading-tight`}
+                        >
+                          {fb.label}
+                        </span>
+                      </div>
+
+                      {/* bottom meta — flex-wrap pour ne jamais casser la carte */}
+                      <div className="absolute inset-x-3 bottom-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 rounded-xl border-2 border-[var(--espresso)] bg-[var(--cream)] px-3 py-2 text-[11px] font-semibold text-[var(--espresso)] shadow-[3px_3px_0_0_var(--espresso)]">
+                        <span className="inline-flex items-center gap-1.5">
+                          <Clock className="h-3.5 w-3.5 text-[var(--caramel)]" />{" "}
+                          {r.prep_time + r.cook_time}'
+                        </span>
+                        <span className="inline-flex items-center gap-1.5">
+                          <Eye className="h-3.5 w-3.5 text-[var(--slate)]" />{" "}
+                          {r.views.toLocaleString("fr-FR")}
+                        </span>
+                        <span className="inline-flex items-center gap-1.5">
+                          <Heart className="h-3.5 w-3.5 text-[var(--caramel)]" /> {r.likes}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Contenu : flex-col + justify-between => titre+desc en haut, lien aligné en bas */}
+                    <div className="flex flex-1 flex-col justify-between gap-4 p-5">
+                      <div className="min-w-0">
+                        <h3 className="line-clamp-2 font-display text-2xl font-bold leading-tight text-[var(--espresso)] transition-colors group-hover:text-[var(--caramel)]">
+                          {r.title}
+                        </h3>
+                        <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-[var(--espresso)]/75">
+                          {r.description}
+                        </p>
+                      </div>
+                      <span className="mt-auto inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--caramel)]">
+                        Voir la recette{" "}
+                        <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                       </span>
                     </div>
-
-                    {/* bottom meta — flex-wrap pour ne jamais casser la carte */}
-                    <div className="absolute inset-x-3 bottom-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 rounded-xl border-2 border-[var(--espresso)] bg-[var(--cream)] px-3 py-2 text-[11px] font-semibold text-[var(--espresso)] shadow-[3px_3px_0_0_var(--espresso)]">
-                      <span className="inline-flex items-center gap-1.5"><Clock className="h-3.5 w-3.5 text-[var(--caramel)]" /> {r.prep_time + r.cook_time}'</span>
-                      <span className="inline-flex items-center gap-1.5"><Eye className="h-3.5 w-3.5 text-[var(--slate)]" /> {r.views.toLocaleString("fr-FR")}</span>
-                      <span className="inline-flex items-center gap-1.5"><Heart className="h-3.5 w-3.5 text-[var(--caramel)]" /> {r.likes}</span>
-                    </div>
-                  </div>
-
-                  {/* Contenu : flex-col + justify-between => titre+desc en haut, lien aligné en bas */}
-                  <div className="flex flex-1 flex-col justify-between gap-4 p-5">
-                    <div className="min-w-0">
-                      <h3 className="line-clamp-2 font-display text-2xl font-bold leading-tight text-[var(--espresso)] transition-colors group-hover:text-[var(--caramel)]">
-                        {r.title}
-                      </h3>
-                      <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-[var(--espresso)]/75">{r.description}</p>
-                    </div>
-                    <span className="mt-auto inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--caramel)]">
-                      Voir la recette <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-                    </span>
-                  </div>
-                </Link>
-              </motion.article>
-            );
-          })}
-        </motion.div>
+                  </Link>
+                </motion.article>
+              );
+            })}
+          </motion.div>
         )}
       </div>
     </section>
   );
 }
 
-
 /* ============== UI BLOCKS ============== */
-function SectionKicker({ eyebrow, title, intro, align = "center" }: { eyebrow: string; title: string; intro?: string; align?: "center" | "left" }) {
+function SectionKicker({
+  eyebrow,
+  title,
+  intro,
+  align = "center",
+}: {
+  eyebrow: string;
+  title: string;
+  intro?: string;
+  align?: "center" | "left";
+}) {
   const cls = align === "center" ? "text-center mx-auto" : "text-left";
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.8, ease: EASE_OUT }}
       className={`${cls} max-w-3xl px-4 sm:px-6`}
     >
@@ -307,7 +414,11 @@ function SectionKicker({ eyebrow, title, intro, align = "center" }: { eyebrow: s
       <h2 className="mt-4 font-display text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold leading-tight text-[var(--espresso)]">
         {title}
       </h2>
-      {intro && <p className="mt-4 text-sm sm:text-base md:text-lg leading-relaxed text-[var(--espresso)]/75 max-w-xl mx-auto">{intro}</p>}
+      {intro && (
+        <p className="mt-4 text-sm sm:text-base md:text-lg leading-relaxed text-[var(--espresso)]/75 max-w-xl mx-auto">
+          {intro}
+        </p>
+      )}
     </motion.div>
   );
 }

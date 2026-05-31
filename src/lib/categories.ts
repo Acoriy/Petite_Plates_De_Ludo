@@ -47,3 +47,21 @@ export async function deleteCategory(id: string): Promise<void> {
   const { error } = await supabase.from("categories").delete().eq("id", id);
   if (error) throw error;
 }
+
+export async function updateCategory(id: string, input: { name?: string; slug?: string; image_url?: string | null; description?: string | null }) {
+  const payload: any = {};
+  if (typeof input.name === "string") payload.name = input.name.trim();
+  if (typeof input.slug === "string") payload.slug = input.slug.trim();
+  if (typeof input.image_url !== "undefined") payload.image_url = input.image_url || null;
+  if (typeof input.description !== "undefined") payload.description = input.description || null;
+
+  const { data, error } = await supabase
+    .from("categories")
+    .update(payload)
+    .eq("id", id)
+    .select(SELECT_CATEGORY)
+    .single();
+
+  if (error) throw error;
+  return data as Category;
+}

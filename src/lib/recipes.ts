@@ -19,6 +19,7 @@ export interface Recipe {
   ingredients: Ingredient[];
   instructions: Instruction[];
   astuces: string | null;
+  chef_notes?: string | null;
   prep_time: number;
   cook_time: number;
   servings: number;
@@ -50,10 +51,24 @@ export interface Category {
   updated_at?: string;
 }
 
-const SELECT_RECIPE =
+const SELECT_RECIPE_BASE =
   "id,slug,title,description,ingredients,instructions,astuces,prep_time,cook_time,servings,difficulty,cover_image,gallery,category_id,tags,views,likes,featured,status,seo_title,seo_description,published_at,created_at,updated_at,category:categories(id,name,slug,image_url)";
 
+const SELECT_RECIPE_WITH_CHEF = `${SELECT_RECIPE_BASE},chef_notes`;
 const SELECT_CATEGORY = "id,name,slug,description,image_url,display_order";
+
+function selectRecipeFields(includeChefNotes = true) {
+  return includeChefNotes ? SELECT_RECIPE_WITH_CHEF : SELECT_RECIPE_BASE;
+}
+
+async function selectRecipe(query: ReturnType<typeof supabase.from> & { select: (cols: string) => any }) {
+  const { data, error } = await query.select(selectRecipeFields(true));
+  if (!error) return { data, error };
+  if (error.message?.includes("chef_notes")) {
+    return query.select(selectRecipeFields(false));
+  }
+  return { data, error };
+}
 
 /** Recettes publiées depuis Supabase uniquement (100 % dynamique). */
 export async function listPublishedRecipes(opts?: {
@@ -71,19 +86,25 @@ export async function listPublishedRecipes(opts?: {
     categoryId = cat?.id ?? "__none__";
   }
 
-  let q = supabase
-    .from("recipes")
-    .select(SELECT_RECIPE)
-    .eq("status", "published")
-    .order("published_at", { ascending: false });
+  const buildListQuery = (includeChefNotes = true) => {
+    let q = supabase
+      .from("recipes")
+      .select(selectRecipeFields(includeChefNotes))
+      .eq("status", "published")
+      .order("published_at", { ascending: false });
 
-  if (opts?.featured) q = q.eq("featured", true);
-  if (categoryId) q = q.eq("category_id", categoryId);
-  if (opts?.limit) q = q.limit(opts.limit);
+    if (opts?.featured) q = q.eq("featured", true);
+    if (categoryId) q = q.eq("category_id", categoryId);
+    if (opts?.limit) q = q.limit(opts.limit);
+    return q;
+  };
 
-  const { data, error } = await q;
-  if (error) throw error;
-  return (data ?? []) as unknown as Recipe[];
+  let result = await buildListQuery(true);
+  if (result.error && result.error.message?.includes("chef_notes")) {
+    result = await buildListQuery(false);
+  }
+  if (result.error) throw result.error;
+  return (result.data ?? []) as unknown as Recipe[];
 }
 
 function normalizeSlug(input: string): string {
@@ -107,25 +128,41 @@ function safeDecode(input: string): string {
 export async function getRecipeBySlug(slug: string): Promise<Recipe | null> {
   const normalized = normalizeSlug(safeDecode(slug));
 
-  const { data, error } = await supabase
+  let result = await supabase
     .from("recipes")
-    .select(SELECT_RECIPE)
+    .select(selectRecipeFields(true))
     .eq("slug", normalized)
     .eq("status", "published")
     .maybeSingle();
-  if (error) throw error;
-  return data ? (data as unknown as Recipe) : null;
+  if (result.error && result.error.message?.includes("chef_notes")) {
+    result = await supabase
+      .from("recipes")
+      .select(selectRecipeFields(false))
+      .eq("slug", normalized)
+      .eq("status", "published")
+      .maybeSingle();
+  }
+  if (result.error) throw result.error;
+  return result.data ? (result.data as unknown as Recipe) : null;
 }
 
 export async function getRecipeById(id: string): Promise<Recipe | null> {
-  const { data, error } = await supabase
+  let result = await supabase
     .from("recipes")
-    .select(SELECT_RECIPE)
+    .select(selectRecipeFields(true))
     .eq("id", id)
     .eq("status", "published")
     .maybeSingle();
-  if (error) throw error;
-  return data ? (data as unknown as Recipe) : null;
+  if (result.error && result.error.message?.includes("chef_notes")) {
+    result = await supabase
+      .from("recipes")
+      .select(selectRecipeFields(false))
+      .eq("id", id)
+      .eq("status", "published")
+      .maybeSingle();
+  }
+  if (result.error) throw result.error;
+  return result.data ? (result.data as unknown as Recipe) : null;
 }
 
 /** Catégories depuis Supabase uniquement (100 % dynamique). */

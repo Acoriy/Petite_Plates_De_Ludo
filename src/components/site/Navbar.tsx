@@ -40,7 +40,7 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 transition-all duration-300",
+        "sticky top-0 z-50 transition-all duration-300 no-print",
         scrolled ? "bg-background/85 backdrop-blur-md shadow-[var(--shadow-soft)]" : "bg-transparent",
       )}
     >
@@ -78,28 +78,38 @@ export function Navbar() {
               <AnimatePresence>
                 {link.hasDropdown && hoverRecipes && (
                   <motion.div
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 8 }}
-                    transition={{ duration: 0.2 }}
-                    className="absolute left-1/2 top-full z-40 mt-2 w-[min(480px,90vw)] -translate-x-1/2 rounded-2xl border border-border bg-popover p-3 shadow-[var(--shadow-deep)]"
+                    transition={{ duration: 0.28 }}
+                    className="absolute left-1/2 top-full z-40 mt-3 -translate-x-1/2 w-[70vw] max-w-[1200px] rounded-2xl border border-border bg-popover p-6 shadow-[var(--shadow-deep)]"
                   >
-                    <p className="px-3 pb-2 font-hand text-base text-primary">Par catégorie</p>
+                    <div className="flex items-center justify-between px-2">
+                      <p className="font-hand text-base text-primary">Par catégorie</p>
+                      <Link
+                        to="/carnet-de-recettes"
+                        className="rounded-xl bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.02]"
+                      >
+                        Voir toutes les recettes →
+                      </Link>
+                    </div>
+
                     {categories.length === 0 ? (
-                      <p className="px-3 py-4 text-sm text-muted-foreground">Aucune catégorie pour le moment.</p>
+                      <p className="px-3 py-6 text-sm text-muted-foreground">Aucune catégorie pour le moment.</p>
                     ) : (
-                      <div className="grid max-h-[320px] grid-cols-2 gap-2 overflow-y-auto">
+                      <motion.div className="mt-4 flex flex-wrap gap-4 overflow-hidden px-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                         {categories.map((cat, i) => (
                           <motion.div
                             key={cat.id}
-                            initial={{ opacity: 0, x: -8 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: i * 0.03 }}
+                            initial={{ opacity: 0, y: 6 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: i * 0.02 }}
+                            className="flex w-1/3 min-w-[180px] max-w-[260px] items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-foreground/80 transition-all hover:bg-secondary hover:text-primary"
                           >
                             <Link
                               to="/carnet-de-recettes/categorie/$slug"
                               params={{ slug: cat.slug }}
-                              className="flex items-center gap-3 rounded-xl px-2 py-2 text-sm font-medium text-foreground/80 transition-all hover:bg-secondary hover:text-primary"
+                              className="flex items-center gap-3 w-full"
                             >
                               <span className="h-12 w-12 shrink-0 overflow-hidden rounded-lg">
                                 <CategoryImage category={cat} className="h-12 w-12" rounded="rounded-lg" />
@@ -108,14 +118,8 @@ export function Navbar() {
                             </Link>
                           </motion.div>
                         ))}
-                      </div>
+                      </motion.div>
                     )}
-                    <Link
-                      to="/carnet-de-recettes"
-                      className="mt-2 flex items-center justify-center rounded-xl bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.02]"
-                    >
-                      Voir toutes les recettes →
-                    </Link>
                   </motion.div>
                 )}
               </AnimatePresence>

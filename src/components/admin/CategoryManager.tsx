@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { Plus, Trash2, ImageIcon } from "lucide-react";
 import { listCategoriesForAdmin } from "@/lib/admin-dashboard";
-import { createCategory, deleteCategory, uploadCategoryImage } from "@/lib/categories";
+import { createCategory, deleteCategory, uploadCategoryImage, updateCategory } from "@/lib/categories";
 import { humanizeError } from "@/lib/form-errors";
 import { CategoryImage } from "@/components/site/CategoryImage";
 import type { Category } from "@/lib/recipes";
@@ -16,6 +16,8 @@ const categorySchema = z.object({
 
 export function CategoryManager() {
   const qc = useQueryClient();
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingForm, setEditingForm] = useState<{ name: string; slug: string; image_url?: string | null }>({ name: "", slug: "", image_url: "" });
   const [form, setForm] = useState({ name: "", image_url: "" });
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -74,6 +76,24 @@ export function CategoryManager() {
     } catch (err) {
       toast.error(humanizeError(err));
     }
+  };
+
+  const startEdit = (cat: Category) => {
+    setEditingId(cat.id);
+    setEditingForm({ name: cat.name, slug: cat.slug, image_url: cat.image_url ?? undefined });
+  };
+
+  const saveEdit = async (id: string) => {
+    setBusy(true);
+    try {
+      await updateCategory(id, { name: editingForm.name, slug: editingForm.slug, image_url: editingForm.image_url ?? null });
+      toast.success("Catégorie mise à jour");
+      setEditingId(null);
+      refetch();
+      invalidateAll();
+    } catch (err) {
+      toast.error(humanizeError(err));
+    } finally { setBusy(false); }
   };
 
   return (
@@ -143,26 +163,42 @@ export function CategoryManager() {
         ) : (
           <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {categories.map((cat) => (
-              <li
-                key={cat.id}
-                className="flex gap-3 rounded-2xl border border-border bg-background p-3"
-              >
-                <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl">
-                  <CategoryImage category={cat} className="h-16 w-16" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate font-semibold">{cat.name}</p>
-                  <p className="truncate text-xs text-muted-foreground">/{cat.slug}</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => void remove(cat)}
-                  className="shrink-0 self-start rounded-full bg-secondary p-2 text-muted-foreground hover:bg-destructive hover:text-destructive-foreground"
-                  title="Supprimer"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </li>
+                  <li key={cat.id} className="flex gap-3 rounded-2xl border border-border bg-background p-3">
+                    <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl">
+                      <CategoryImage category={cat} className="h-16 w-16" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      {editingId === cat.id ? (
+                        <div className="space-y-1">
+                          <input value={editingForm.name} onChange={e => setEditingForm(f => ({ ...f, name: e.target.value }))} className="w-full rounded-xl border-2 border-border bg-card px-3 py-2 text-sm" />
+                          <input value={editingForm.slug} onChange={e => setEditingForm(f => ({ ...f, slug: e.target.value }))} className="w-full rounded-xl border-2 border-border bg-card px-3 py-2 text-sm" />
+                          <input value={editingForm.image_url ?? ""} onChange={e => setEditingForm(f => ({ ...f, image_url: e.target.value }))} placeholder="Image URL" className="w-full rounded-xl border-2 border-border bg-card px-3 py-2 text-sm" />
+                        </div>
+                      ) : (
+                        <>
+                          <p className="truncate font-semibold">{cat.name}</p>
+                          <p className="truncate text-xs text-muted-foreground">/{cat.slug}</p>
+                        </>
+                      )}
+                    </div>
+                    <div className="flex flex-col items-end gap-2">
+                      {editingId === cat.id ? (
+                        <>
+                          <div className="flex gap-2">
+                            <button onClick={() => saveEdit(cat.id)} className="rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground">Enregistrer</button>
+                            <button onClick={() => setEditingId(null)} className="rounded-full bg-secondary px-3 py-1.5 text-xs font-semibold">Annuler</button>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex gap-2">
+                            <button onClick={() => startEdit(cat)} className="rounded-full bg-secondary px-3 py-1.5 text-xs font-semibold">Éditer</button>
+                            <button type="button" onClick={() => void remove(cat)} className="rounded-full bg-secondary px-3 py-1.5 text-xs font-semibold text-destructive hover:bg-destructive/10">Supprimer</button>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </li>
             ))}
           </ul>
         )}

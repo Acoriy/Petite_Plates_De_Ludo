@@ -4,7 +4,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { z } from "zod";
 import type { Session } from "@supabase/supabase-js";
-import { Plus, Pencil, Trash2, LogOut, ChefHat, Eye, Heart, ExternalLink } from "lucide-react";
+import { Plus, Pencil, Trash2, LogOut, ChefHat, Eye, Heart, ExternalLink, X } from "lucide-react";
+import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { listAdminRecipes, listCategoriesForAdmin } from "@/lib/admin-dashboard";
 import { CategoryManager } from "@/components/admin/CategoryManager";
@@ -303,6 +304,7 @@ const recipeSchema = z.object({
   servings: z.coerce.number().min(1).max(99),
   difficulty: z.enum(["Facile", "Moyen", "Difficile"]),
   cover_image: z.string().url().or(z.literal("")),
+  chef_notes: z.string().max(2000).or(z.literal("")).optional(),
   featured: z.boolean(),
   status: z.enum(["draft", "published"]),
 });
@@ -356,8 +358,32 @@ function RecipeForm({ recipe, categories, onClose, onSaved }: { recipe: Recipe |
     status: (recipe?.status ?? "published") as "draft" | "published",
     ingredients: normalizeIngredients((recipe?.ingredients as Ingredient[] | undefined) ?? [{ name: "", quantity: "", unit: "" }]),
     instructions: renumberInstructionsKeepEmpty((recipe?.instructions as Instruction[] | undefined) ?? [{ step: 1, text: "" }]),
+    chef_notes: (recipe as any)?.chef_notes ?? recipe?.astuces ?? "",
   });
   const [busy, setBusy] = useState(false);
+
+  const storageKey = `recipe-form-${recipe?.id ?? "new"}`;
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(storageKey);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        setForm((f) => ({ ...f, ...parsed }));
+      }
+    } catch (e) {
+      // ignore
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(form));
+    } catch (e) {
+      // noop
+    }
+  }, [form, storageKey]);
 
   const uploadImage = async (file: File) => {
     const ext = file.name.split(".").pop();
@@ -389,22 +415,40 @@ function RecipeForm({ recipe, categories, onClose, onSaved }: { recipe: Recipe |
         ingredients: parsedIngredients,
         instructions: parsedInstructions,
         cover_image: base.cover_image || null,
+        chef_notes: form.chef_notes || null,
         ...publishedPatch,
       };
-      const { error } = recipe
-        ? await supabase.from("recipes").update(payload).eq("id", recipe.id)
-        : await supabase.from("recipes").insert({ ...payload, published_at: base.status === "published" ? new Date().toISOString() : null });
-      if (error) throw error;
+
+      const executeSave = async (payloadToSend: typeof payload) =>
+        recipe
+          ? await supabase.from("recipes").update(payloadToSend).eq("id", recipe.id)
+          : await supabase.from("recipes").insert({ ...payloadToSend, published_at: base.status === "published" ? new Date().toISOString() : null });
+
+      let result = await executeSave(payload);
+      if (result.error && result.error.message?.includes("chef_notes")) {
+        const { chef_notes, ...withoutNotes } = payload;
+        result = await executeSave(withoutNotes as typeof payload);
+      }
+      if (result.error) throw result.error;
       toast.success(recipe ? "Recette mise à jour" : "Recette créée");
+      try { localStorage.removeItem(`recipe-form-${recipe?.id ?? "new"}`); } catch {}
       onSaved();
     } catch (err) {
       toast.error(humanizeError(err));
     } finally { setBusy(false); }
   };
 
+  const handleClose = () => {
+    try { localStorage.removeItem(storageKey); } catch {}
+    onClose();
+  };
+
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-espresso/70 p-4" onClick={onClose}>
-      <form onClick={e => e.stopPropagation()} onSubmit={save} className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-card p-6 shadow-[var(--shadow-deep)]">
+    <div className="fixed inset-0 z-50 grid place-items-center bg-espresso/70 p-4">
+      <motion.form onSubmit={save} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-card p-6 shadow-[var(--shadow-deep)] relative">
+        <button type="button" onClick={handleClose} aria-label="Fermer" className="absolute right-4 top-4 rounded-full p-2 text-muted-foreground hover:bg-secondary hover:text-primary-foreground">
+          <X className="h-4 w-4" />
+        </button>
         <h2 className="font-display text-2xl font-bold">{recipe ? "Modifier" : "Nouvelle"} recette</h2>
         <div className="mt-4 space-y-3">
           <div>
@@ -564,6 +608,13 @@ function RecipeForm({ recipe, categories, onClose, onSaved }: { recipe: Recipe |
               ))}
             </div>
           </div>
+          <div className="rounded-2xl border border-border bg-yellow-50 p-4">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-semibold">Remarques du Chef</p>
+              <p className="text-xs text-muted-foreground">Conseils, variantes, astuces</p>
+            </div>
+            <textarea value={form.chef_notes} onChange={e => setForm({ ...form, chef_notes: e.target.value })} rows={4} placeholder="Par ex : Remplacez le beurre par du ghee pour plus de saveurs…" className="mt-3 w-full rounded-xl border-2 border-border bg-background p-3 text-sm" />
+          </div>
           <div className="flex items-center gap-4">
             <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.featured} onChange={e => setForm({ ...form, featured: e.target.checked })} /> Mise en avant ⭐</label>
             <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value as "draft" | "published" })} className="h-9 rounded-xl border-2 border-border bg-background px-3 text-sm">
@@ -572,10 +623,10 @@ function RecipeForm({ recipe, categories, onClose, onSaved }: { recipe: Recipe |
           </div>
         </div>
         <div className="mt-5 flex gap-2">
-          <button type="button" onClick={onClose} className="flex-1 rounded-full bg-secondary py-3 text-sm font-semibold">Annuler</button>
+          <button type="button" onClick={handleClose} className="flex-1 rounded-full bg-secondary py-3 text-sm font-semibold">Fermer</button>
           <button disabled={busy} className="flex-1 rounded-full bg-primary py-3 text-sm font-semibold text-primary-foreground disabled:opacity-60">{busy ? "…" : "Enregistrer"}</button>
         </div>
-      </form>
+      </motion.form>
     </div>
   );
 }

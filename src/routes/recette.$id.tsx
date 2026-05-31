@@ -1,7 +1,7 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Clock, Users, Check, Printer, Heart } from "lucide-react";
+import { Clock, Users, Check, Printer, Heart, ChefHat } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Recipe } from "@/lib/recipes";
 import { getRecipeById, listPublishedRecipes } from "@/lib/recipes";
@@ -149,7 +149,7 @@ function RecipeDetailPage() {
                           initial={false}
                           animate={{ opacity: checked[i] ? 0.4 : 1 }}
                         >
-                          <div className="text-sm font-medium leading-relaxed">
+                          <div className={`text-sm font-medium leading-relaxed ${checked[i] ? 'line-through opacity-40' : ''}`}>
                             {ing.quantity ? `${ing.quantity} ${ing.unit ?? ''} ` : ''}
                             <span className="ml-1">{ing.name}</span>
                           </div>
@@ -194,7 +194,7 @@ function RecipeDetailPage() {
                   >
                     <div className="flex items-start gap-4">
                       <button onClick={() => setCurrentStep(idx)} className="flex items-center gap-3 focus:outline-none no-print">
-                        <div className={`flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-emerald-200 to-emerald-400 text-2xl font-handwritten`}>{idx + 1}</div>
+                        <div className={`flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-emerald-200 to-emerald-400 text-2xl font-handwritten transition-transform duration-200 ${currentStep === idx ? 'ring-4 ring-emerald-200 scale-105' : ''}`}>{idx + 1}</div>
                       </button>
 
                       <div>
@@ -207,10 +207,15 @@ function RecipeDetailPage() {
               </ol>
             </section>
 
-            {recipe.astuces ? (
+            {(recipe.astuces || (recipe as any).chef_notes) ? (
               <motion.section variants={childFadeUp} className="mt-8 rounded-2xl border p-6 bg-yellow-50">
-                <h3 className="text-lg font-semibold">Astuces</h3>
-                <div className="mt-2 text-sm">{recipe.astuces}</div>
+                <div className="flex items-start gap-3">
+                  <div className="grid h-10 w-10 place-items-center rounded-full bg-[var(--caramel)] text-white"><ChefHat className="h-5 w-5" /></div>
+                  <div>
+                    <h3 className="text-lg font-semibold">Conseils du chef</h3>
+                    <div className="mt-2 text-sm">{(recipe as any).chef_notes ?? recipe.astuces}</div>
+                  </div>
+                </div>
               </motion.section>
             ) : null}
 

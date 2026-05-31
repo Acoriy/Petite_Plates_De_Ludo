@@ -301,13 +301,13 @@ function SectionKicker({ eyebrow, title, intro, align = "center" }: { eyebrow: s
     <motion.div
       initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.8, ease: EASE_OUT }}
-      className={`${cls} max-w-2xl`}
+      className={`${cls} max-w-3xl px-4 sm:px-6`}
     >
       <p className="text-xs uppercase tracking-[0.35em] text-[var(--caramel)]">— {eyebrow} —</p>
-      <h2 className="mt-4 font-display text-4xl font-bold leading-[1.05] text-[var(--espresso)] md:text-6xl">
+      <h2 className="mt-4 font-display text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold leading-tight text-[var(--espresso)]">
         {title}
       </h2>
-      {intro && <p className="mt-5 text-base leading-relaxed text-[var(--espresso)]/70 md:text-lg">{intro}</p>}
+      {intro && <p className="mt-4 text-sm sm:text-base md:text-lg leading-relaxed text-[var(--espresso)]/75 max-w-xl mx-auto">{intro}</p>}
     </motion.div>
   );
 }

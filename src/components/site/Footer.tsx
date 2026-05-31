@@ -11,7 +11,7 @@ export function Footer() {
   });
 
   return (
-    <footer className="mt-24 text-cream" style={{ backgroundColor: "#85511C" }}>
+    <footer className="mt-24 text-cream no-print" style={{ backgroundColor: "#85511C" }}>
       <div className="container mx-auto px-4 py-16 md:px-8">
         <div className="grid gap-12 md:grid-cols-4">
           <div className="md:col-span-2">

@@ -1,0 +1,48 @@
+/** Catalogue complet des catégories proposées dans le dashboard. */
+export const CATEGORY_CATALOG: {
+  name: string;
+  slug: string;
+  emoji: string;
+  description: string;
+}[] = [
+  { name: "Entrées", slug: "entrees", emoji: "🥗", description: "Pour commencer le repas avec gourmandise" },
+  { name: "Plats", slug: "plats", emoji: "🍲", description: "Le cœur du repas, généreux et convivial" },
+  { name: "Desserts", slug: "desserts", emoji: "🍰", description: "La touche sucrée pour finir en beauté" },
+  { name: "Apéros", slug: "aperos", emoji: "🥂", description: "À grignoter entre amis" },
+  { name: "Boulange", slug: "boulange", emoji: "🥖", description: "Pains, brioches et viennoiseries maison" },
+  { name: "Soupes & veloutés", slug: "soupes-veloutes", emoji: "🍵", description: "Réconfortants et parfumés" },
+  { name: "Salades", slug: "salades", emoji: "🥬", description: "Fraîches, croquantes et colorées" },
+  { name: "Pâtes & riz", slug: "pates-riz", emoji: "🍝", description: "Italien, asiatique et comfort food" },
+  { name: "Viandes", slug: "viandes", emoji: "🥩", description: "Bœuf, porc, volaille et gibier" },
+  { name: "Poissons & fruits de mer", slug: "poissons-fruits-de-mer", emoji: "🐟", description: "Océan et rivière à la table" },
+  { name: "Végétarien", slug: "vegetarien", emoji: "🥕", description: "Sans viande, plein de goût" },
+  { name: "Vegan", slug: "vegan", emoji: "🌱", description: "100 % végétal" },
+  { name: "Sans gluten", slug: "sans-gluten", emoji: "🌾", description: "Recettes adaptées" },
+  { name: "Brunch", slug: "brunch", emoji: "🥞", description: "Le meilleur du matin et du midi" },
+  { name: "Petit-déjeuner", slug: "petit-dejeuner", emoji: "☕", description: "Bien commencer la journée" },
+  { name: "Goûter & snacks", slug: "gouter-snacks", emoji: "🍪", description: "Douceurs et petites faims" },
+  { name: "Boissons", slug: "boissons", emoji: "🍹", description: "Cocktails, smoothies et maisons" },
+  { name: "Sauces & condiments", slug: "sauces-condiments", emoji: "🫙", description: "Pour sublimer chaque plat" },
+  { name: "Conserves & bocaux", slug: "conserves-bocaux", emoji: "🫒", description: "Anticiper et faire durer" },
+  { name: "Cuisine du monde", slug: "cuisine-du-monde", emoji: "🌍", description: "Voyager depuis la cuisine" },
+  { name: "Cuisine rapide", slug: "cuisine-rapide", emoji: "⚡", description: "Bon et vite, sans stress" },
+  { name: "Batch cooking", slug: "batch-cooking", emoji: "📦", description: "Préparer à l'avance" },
+  { name: "Fête & occasions", slug: "fete-occasions", emoji: "🎉", description: "Anniversaires, fêtes, réceptions" },
+  { name: "Cuisine d'hiver", slug: "cuisine-hiver", emoji: "❄️", description: "Plats réconfortants de saison" },
+  { name: "Cuisine d'été", slug: "cuisine-ete", emoji: "☀️", description: "Léger, frais et ensoleillé" },
+  { name: "Tartes salées & quiches", slug: "tartes-quiches", emoji: "🥧", description: "Classiques de la table" },
+  { name: "Gratins", slug: "gratins", emoji: "🧀", description: "Dorés, fondants, irrésistibles" },
+  { name: "Barbecue & plancha", slug: "barbecue-plancha", emoji: "🔥", description: "Cuisson conviviale dehors" },
+  { name: "Fromages", slug: "fromages", emoji: "🧀", description: "Plateaux et recettes fromagères" },
+  { name: "Accompagnements", slug: "accompagnements", emoji: "🥔", description: "Légumes, féculents et sides" },
+  { name: "Recettes kids", slug: "recettes-kids", emoji: "👶", description: "Simples et ludiques" },
+  { name: "Anti-gaspi", slug: "anti-gaspi", emoji: "♻️", description: "Cuisiner malin avec les restes" },
+  { name: "Pâtisserie fine", slug: "patisserie-fine", emoji: "🎂", description: "Technique et élégance" },
+  { name: "Chocolat", slug: "chocolat", emoji: "🍫", description: "Gourmandise intense" },
+  { name: "Fruits & compotes", slug: "fruits-compotes", emoji: "🍎", description: "Douceur naturelle" },
+  { name: "Tartines & sandwichs", slug: "tartines-sandwichs", emoji: "🥪", description: "Rapides et savoureux" },
+  { name: "Pizza & calzone", slug: "pizza-calzone", emoji: "🍕", description: "Pâte, garniture, four" },
+  { name: "Bowls & salades composées", slug: "bowls", emoji: "🥣", description: "Équilibrés et colorés" },
+  { name: "One-pot", slug: "one-pot", emoji: "🍲", description: "Tout dans une casserole" },
+  { name: "Air fryer", slug: "air-fryer", emoji: "🌀", description: "Croustillant avec moins de matière grasse" },
+];
